@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT -Dspring.profiles.active=okta,prod $JAVA_OPTS -jar target/restaurante*.jar
