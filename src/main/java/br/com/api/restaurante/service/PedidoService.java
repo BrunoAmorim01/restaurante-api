@@ -20,7 +20,9 @@ public class PedidoService {
 
 	public Pedido salvar(Pedido pedido) {
 		pedido.getItens().forEach(i -> i.setPedido(pedido));
+		
 		pedido.setDataCriacao(LocalDateTime.now());
+		pedido.setTotal(pedido.getValorTotalItens());		
 		return pedidoRepository.save(pedido);
 	}
 
@@ -33,12 +35,10 @@ public class PedidoService {
 		
 		pedidoSalvo.setDesconto(pedido.getDesconto());
 		pedidoSalvo.setObservacao(pedido.getObservacao());
-		pedidoSalvo.setTotal(pedido.getTotal());
+		pedidoSalvo.setTotal(pedido.getValorTotalItens());
 		
 		BeanUtils.copyProperties(pedido, pedidoSalvo, "id", "itens");
-		return pedidoRepository.save(pedidoSalvo);
-		// pedido.getItens().forEach( i -> i.setPedido(pedido));
-		// return pedidoRepository.save(pedido);
+		return pedidoRepository.save(pedidoSalvo);		
 	}
 
 	public Optional<Pedido> buscarPedidoPorCodigo(Long codigo) {

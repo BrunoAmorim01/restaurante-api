@@ -87,24 +87,22 @@ public class PedidoRepositoryImpl implements PedidoRepositoryQuery {
 
 	@Override
 	public BigDecimal vendaMediaMesAtual() {
-		// SUM(total)/count(*)
-		// AVG(total)
-		// WHERE EXTRACT (YEAR_MONTH FROM p.dataCriacao ) = EXTRACT (YEAR_MONTH FROM
-		// :data)
-		// WHERE MONTH(p.dataCriacao) = :data
+		
 		var query = manager.createQuery(
 				"SELECT AVG(total) FROM Pedido p WHERE EXTRACT (YEAR_MONTH FROM p.dataCriacao ) = EXTRACT (YEAR_MONTH FROM :data)",
 				Double.class).setParameter("data", LocalDate.now());
-		// .setParameter("data", MonthDay.now().getMonthValue());
 
-		Optional<BigDecimal> media = Optional
-				.ofNullable(BigDecimal.valueOf(query.getSingleResult()).setScale(2, RoundingMode.HALF_EVEN));
-		return media.orElse(BigDecimal.ZERO);
+		Optional<Double> media = Optional.ofNullable(query.getSingleResult());
+		if (media.isPresent()) {
+			return BigDecimal.valueOf(media.get());
+		}			
+				
+		return BigDecimal.ZERO;
 	}
 
 	@Override
 	public List<RankingProduto> rankingProdutosMaisVendidosMesAtual() {
-		//COUNT(pro)
+
 		var query = manager.createQuery(
 				"SELECT new br.com.api.restaurante.dto.RankingProduto(pro.nome, SUM(i.quantidade) as qtd) "
 				+ "FROM Pedido ped "
